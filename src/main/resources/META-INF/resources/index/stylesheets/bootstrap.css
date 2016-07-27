@@ -5828,4 +5828,18 @@ td.visible-print {
     display: none !important;
   }
 }
+.checkbox1 {
+  width: 1.8rem;
+  height: 1.8rem;
+  background-color: #ffffff;
+  border: 1px #0b0095 solid;
+  padding: 0;
+  margin-right: 10px!important;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+.todoDesc {
+  font-size: medium;
+}
 /*# sourceMappingURL=bootstrap.css.map */
