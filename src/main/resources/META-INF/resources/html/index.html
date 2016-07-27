@@ -37,7 +37,7 @@
                 $scope.todoList[idx] = angular.copy($scope.todoList.selected);
                 $http({
                     method: "PUT",
-                    data : {
+                    data: {
                         description: $scope.todoList[idx].description
                     },
                     url: "/ig/api/todo/v1/update/" + $scope.todoList[idx].id
@@ -180,8 +180,10 @@
                                 <script type="text/ng-template" id="display">
                                     <td>
                                         <input type="checkbox" ng-click="statusUpdate(todo.id)"
-                                               ng-checked="{{todo.status ==='DONE'}}" class="checkbox1"/>
-                                        <span ng-class="todo.status ==='DONE'?'strikethrough todoDesc':'todoDesc'" ng-click="editContact(todo)" id="todo.id">
+                                               ng-checked="{{todo.status ==='DONE'}}" class="checkbox1"
+                                               ng-false-value="'ACTIVE'" ng-true-value="'DONE'"/>
+                                        <span ng-class="todo.status ==='DONE'?'strikethrough todoDesc':'todoDesc'"
+                                              ng-click="editContact(todo)" id="todo.id">
                                             {{todo.description}}
                                         </span>
                                     </td>
