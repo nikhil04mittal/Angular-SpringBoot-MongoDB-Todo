@@ -86,15 +86,16 @@
                 }
             }
 
-            $scope.statusUpdate = function (id) {
+            $scope.statusUpdate = function (id, status) {
+                status = status==="DONE"?"ACTIVE":"DONE";
                 $http({
                     method: "PATCH",
                     data: {
-                        status: ""
+                        status: status
                     },
                     url: "/ig/api/todo/v1/status/" + id
                 }).success(function (response) {
-                    $("#" + id).toggleClass("strikethrough");
+                    getTodoList();
                 })
             }
         })
@@ -179,11 +180,11 @@
                                 </tr>
                                 <script type="text/ng-template" id="display">
                                     <td>
-                                        <input type="checkbox" ng-click="statusUpdate(todo.id)"
+                                        <input type="checkbox" ng-click="statusUpdate(todo.id, todo.status)"
                                                ng-checked="{{todo.status ==='DONE'}}" class="checkbox1"
                                                ng-false-value="'ACTIVE'" ng-true-value="'DONE'"/>
                                         <span ng-class="todo.status ==='DONE'?'strikethrough todoDesc':'todoDesc'"
-                                              ng-click="editContact(todo)" id="todo.id">
+                                              ng-click="editContact(todo)" id="{{todo.id}}">
                                             {{todo.description}}
                                         </span>
                                     </td>
