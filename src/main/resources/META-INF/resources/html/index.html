@@ -151,8 +151,7 @@
                             <table class="table">
                                 <tr ng-repeat="todo in todoList|filter:search track by $index">
                                     <td>
-                                        <input type="checkbox"  ng-checked = "{{todo.status ==='DONE'}}" ng-model="status" /><span>{{todo.description}}</span>
-                                        <input type="button" ng-click="statusUpdate()"/>
+                                        <input type="checkbox"  ng-click="statusUpdate(todo.id)" ng-checked = "{{todo.status ==='DONE'}}" ng-model="status" /><span>{{todo.description}}</span>
                                     </td>
                                     <td>
                                         <button type="button" ng-click="delete(todo.id)"
