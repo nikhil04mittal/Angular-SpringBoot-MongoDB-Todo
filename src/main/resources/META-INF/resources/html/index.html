@@ -24,12 +24,39 @@
         var todoApp = angular.module("TodoApp", [])
         todoApp.controller("TodoController", function ($scope, $http) {
 
+            $scope.getTemplate = function (todo) {
+                if (todo.id === $scope.todoList.selected.id) return 'edit';
+                else return 'display';
+            };
+
+            $scope.editContact = function (todo) {
+                $scope.todoList.selected = angular.copy(todo);
+            };
+
+            $scope.update = function (idx) {
+                $scope.todoList[idx] = angular.copy($scope.todoList.selected);
+                $http({
+                    method: "PUT",
+                    data : {
+                        description: $scope.todoList[idx].description
+                    },
+                    url: "/ig/api/todo/v1/update/" + $scope.todoList[idx].id
+                }).success(function (response) {
+                    $scope.todoList.selected = {};
+                })
+            };
+
+            $scope.reset = function () {
+                $scope.todoList.selected = {};
+            };
+
             var getTodoList = function () {
                 $http({
                     method: "GET",
                     url: "/ig/api/todo/v1/list"
                 }).success(function (response) {
                     $scope.todoList = response
+                    $scope.todoList.selected = {}
                 })
             };
             getTodoList();
@@ -59,15 +86,13 @@
                 }
             }
 
-            $scope.statusUpdate = function () {
-                console.log($scope.status);
-
+            $scope.statusUpdate = function (id) {
                 $http({
                     method: "PATCH",
                     data: {
-                        status: $scope.statusObj
+                        status: ""
                     },
-                    url: "/ig/api/todo/v1/status/"
+                    url: "/ig/api/todo/v1/status/" + id
                 }).success(function (response) {
                     $("#" + id).toggleClass("strikethrough");
                 })
@@ -149,18 +174,30 @@
 
                         <div class="panel-body">
                             <table class="table">
-                                <tr ng-repeat="todo in todoList|filter:search track by $index">
-                                    <td>
-                                        <input type="checkbox"  ng-click="statusUpdate(todo.id)" ng-checked = "{{todo.status ==='DONE'}}" ng-model="status" /><span>{{todo.description}}</span>
-                                    </td>
-                                    <td>
-                                        <button type="button" ng-click="delete(todo.id)"
-                                                class="btn btn-default btn-danger pull-right">
-                                            Delete
-                                        </button>
-                                    </td>
+                                <tr ng-repeat="todo in todoList|filter:search track by $index"
+                                    ng-include="getTemplate(todo)">
                                 </tr>
-
+                                <script type="text/ng-template" id="display">
+                                    <td>
+                                        <input type="checkbox" ng-click="statusUpdate(todo.id)"
+                                               ng-checked="{{todo.status ==='DONE'}}" class="checkbox1"/>
+                                        <span ng-class="todo.status ==='DONE'?'strikethrough todoDesc':'todoDesc'" ng-click="editContact(todo)" id="todo.id">
+                                            {{todo.description}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a type="button" ng-click="delete(todo.id)" class="pull-right">
+                                            <i class="fa fa-trash-o fa-2x"></i>
+                                        </a>
+                                    </td>
+                                </script>
+                                <script type="text/ng-template" id="edit">
+                                    <td><input type="text" ng-model="todoList.selected.description"/></td>
+                                    <td>
+                                        <button ng-click="update($index)" class=" btn btn-success">Save</button>
+                                        <button ng-click="reset()" class="btn btn-danger">Cancel</button>
+                                    </td>
+                                </script>
                             </table>
                         </div>
                     </div>
