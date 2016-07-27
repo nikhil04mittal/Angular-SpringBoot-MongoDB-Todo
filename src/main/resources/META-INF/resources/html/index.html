@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Angular TODO With SpringBoot And Mongo</title>
+
+    <link rel="stylesheet" href="index/stylesheets/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="index/stylesheets/sb-admin.css" type="text/css">
+    <link rel="stylesheet" href="index/stylesheets/font-awesome.css" type="text/css">
+    <script type="application/javascript" src="index/javascripts/jquery-1.10.2.js"></script>
+    <script type="application/javascript" src="index/javascripts/bootstrap.js"></script>
+    <script type="application/javascript" src="index/javascripts/angular-1.2.16.js"></script>
+    <style>
+        .strikethrough {
+            text-decoration: line-through
+        }
+    </style>
+
+    <script>
+        var todoApp = angular.module("TodoApp", [])
+        todoApp.controller("TodoController", function ($scope, $http) {
+
+            var getTodoList = function () {
+                $http({
+                    method: "GET",
+                    url: "/ig/api/todo/v1/list"
+                }).success(function (response) {
+                    console.log(response);
+                    $scope.todoList = response
+                })
+            };
+            getTodoList();
+            $scope.delete = function (id) {
+
+                $http({
+                    method: "DELETE",
+                    url: "/ig/api/todo/v1/delete/" + id
+                }).success(function (response) {
+                    getTodoList();
+                })
+            }
+
+
+            $scope.create = function () {
+                $http({
+                    method: "POST",
+                    data: {
+                        description: $scope.description
+                    },
+                    url: "/ig/api/todo/v1/create"
+                }).success(function (response) {
+                    getTodoList();
+                })
+            }
+
+            $scope.statusUpdate = function () {
+                $http({
+                    method: "POST",
+                    data: {
+                        status: $scope.status
+                    },
+                    url: "/ig/api/todo/v1/statusUpdate"
+                }).success(function (response) {
+
+                })
+            }
+        })
+
+
+    </script>
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Angular TODO App</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav side-nav">
+                <li class="active">
+                    <a href="#">
+                        <i class="fa fa-check-square-o"></i> Todo's
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+        <!-- /.navbar-collapse -->
+    </nav>
+
+    <div ng-app="TodoApp">
+        <div id="page-wrapper" ng-controller="TodoController">
+            {{name}}
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>TODO's
+                        <small>A Blank Slate</small>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <form name="createTodo">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">I need to...</h3>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <input name="description" ng-model="description" required="" class="form-control"
+                                           placeholder="to-do Item">
+                                </div>
+                                <input type="submit" ng-disabled="createTodo.task.$invalid" ng-click="create()"
+                                       class="btn btn-success" value="Create"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading clearfix">
+                            <h3 class="panel-title pull-left">To-do List</h3>
+                            <input type="text" ng-model="search" style="width: 300px;" class="form-control pull-right"
+                                   placeholder="Search"/>
+                        </div>
+
+                        <div class="panel-body">
+                            <table class="table">
+                                <tr ng-repeat="todo in todoList|filter:search track by $index">
+                                    <td><input type="checkbox" name="status" ng-model="status" ng-click="statusUpdate(todo.id)"></td>
+                                    <td ng-model="todo.description">{{todo.description}}</td>
+                                    <td>
+                                        <button type="button" ng-click="delete(todo.id)"
+                                                class="btn btn-default btn-danger pull-right">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#wrapper -->
+
+</body>
+</html>
