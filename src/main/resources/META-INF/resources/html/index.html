@@ -29,7 +29,6 @@
                     method: "GET",
                     url: "/ig/api/todo/v1/list"
                 }).success(function (response) {
-                    console.log(response);
                     $scope.todoList = response
                 })
             };
@@ -46,26 +45,31 @@
 
 
             $scope.create = function () {
-                $http({
-                    method: "POST",
-                    data: {
-                        description: $scope.description
-                    },
-                    url: "/ig/api/todo/v1/create"
-                }).success(function (response) {
-                    getTodoList();
-                })
+                if (angular.isDefined($scope.description) && $scope.description.trim().length > 0) {
+                    $http({
+                        method: "POST",
+                        data: {
+                            description: $scope.description
+                        },
+                        url: "/ig/api/todo/v1/create"
+                    }).success(function (response) {
+                        $scope.description = undefined;
+                        getTodoList();
+                    })
+                }
             }
 
             $scope.statusUpdate = function () {
-                $http({
-                    method: "POST",
-                    data: {
-                        status: $scope.status
-                    },
-                    url: "/ig/api/todo/v1/statusUpdate"
-                }).success(function (response) {
+                console.log($scope.status);
 
+                $http({
+                    method: "PATCH",
+                    data: {
+                        status: $scope.statusObj
+                    },
+                    url: "/ig/api/todo/v1/status/"
+                }).success(function (response) {
+                    $("#" + id).toggleClass("strikethrough");
                 })
             }
         })
@@ -107,7 +111,6 @@
 
     <div ng-app="TodoApp">
         <div id="page-wrapper" ng-controller="TodoController">
-            {{name}}
             <div class="row">
                 <div class="col-lg-12">
                     <h1>TODO's
@@ -127,7 +130,7 @@
                             <div class="panel-body">
                                 <div class="form-group">
                                     <input name="description" ng-model="description" required="" class="form-control"
-                                           placeholder="to-do Item">
+                                           placeholder="Todo Item">
                                 </div>
                                 <input type="submit" ng-disabled="createTodo.task.$invalid" ng-click="create()"
                                        class="btn btn-success" value="Create"/>
@@ -147,8 +150,10 @@
                         <div class="panel-body">
                             <table class="table">
                                 <tr ng-repeat="todo in todoList|filter:search track by $index">
-                                    <td><input type="checkbox" name="status" ng-model="status" ng-click="statusUpdate(todo.id)"></td>
-                                    <td ng-model="todo.description">{{todo.description}}</td>
+                                    <td>
+                                        <input type="checkbox"  ng-checked = "{{todo.status ==='DONE'}}" ng-model="status" /><span>{{todo.description}}</span>
+                                        <input type="button" ng-click="statusUpdate()"/>
+                                    </td>
                                     <td>
                                         <button type="button" ng-click="delete(todo.id)"
                                                 class="btn btn-default btn-danger pull-right">
