@@ -1,4 +1,4 @@
 spring:
     data:
         mongodb:
-            uri: mongodb://localhost/todo
+              uri: mongodb://CloudFoundry_mvbjl0m2_jk3b9p52_iemvqmal:x0ZxrN4JxftCKA_cVjY-irvOwF8UxdgR@ds031975.mlab.com:31975/CloudFoundry_mvbjl0m2_jk3b9p52
