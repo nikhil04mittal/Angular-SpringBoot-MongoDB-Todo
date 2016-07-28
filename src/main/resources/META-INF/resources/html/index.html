@@ -176,7 +176,6 @@
                             <input type="text" ng-model="search" style="width: 300px;" class="form-control pull-right"
                                    placeholder="Search"/>
                         </div>
-
                         <div class="panel-body">
                             <table class="table">
                                 <tr ng-repeat="todo in todoList|filter:{description: search} track by $index"
@@ -186,7 +185,7 @@
                                     <td>
                                         <input type="checkbox" ng-click="statusUpdate(todo.id, todo.status)"
                                                ng-model="todo.status" class="checkbox1"/>
-                                        <span ng-class="todo.status ==='DONE'?'strikethrough todoDesc':'todoDesc'"
+                                        <span ng-class="todo.status?'strikethrough todoDesc':'todoDesc'"
                                               ng-click="editContact(todo)" id="{{todo.id}}">
                                             {{todo.description}}
                                         </span>
@@ -203,7 +202,8 @@
                                                    ng-model="todoList.selected.description" required/>
                                         </td>
                                         <td class="pull-right">
-                                            <input type="submit" ng-click="update($index)" class=" btn btn-success" value="Save"/>
+                                            <input type="submit" ng-click="update($index)" class=" btn btn-success"
+                                                   value="Save"/>
                                             <button ng-click="reset()" class="btn btn-danger">Cancel</button>
                                         </td>
                                     </form>
