@@ -5841,5 +5841,6 @@ td.visible-print {
 }
 .todoDesc {
   font-size: medium;
+  cursor: pointer;
 }
 /*# sourceMappingURL=bootstrap.css.map */

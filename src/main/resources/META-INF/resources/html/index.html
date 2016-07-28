@@ -34,16 +34,18 @@
             };
 
             $scope.update = function (idx) {
-                $scope.todoList[idx] = angular.copy($scope.todoList.selected);
-                $http({
-                    method: "PUT",
-                    data: {
-                        description: $scope.todoList[idx].description
-                    },
-                    url: "/ig/api/todo/v1/update/" + $scope.todoList[idx].id
-                }).success(function (response) {
-                    $scope.todoList.selected = {};
-                })
+                if (angular.isDefined($scope.todoList.selected.description) && $scope.todoList.selected.description != "") {
+                    $scope.todoList[idx] = angular.copy($scope.todoList.selected);
+                    $http({
+                        method: "PUT",
+                        data: {
+                            description: $scope.todoList[idx].description
+                        },
+                        url: "/ig/api/todo/v1/update/" + $scope.todoList[idx].id
+                    }).success(function (response) {
+                        $scope.todoList.selected = {};
+                    })
+                }
             };
 
             $scope.reset = function () {
@@ -83,11 +85,13 @@
                         $scope.description = undefined;
                         getTodoList();
                     })
+                } else {
+                    alert("Todo Description cannot be empty.")
                 }
             }
 
             $scope.statusUpdate = function (id, status) {
-                status = status==="DONE"?"ACTIVE":"DONE";
+                status = !status;
                 $http({
                     method: "PATCH",
                     data: {
@@ -175,14 +179,13 @@
 
                         <div class="panel-body">
                             <table class="table">
-                                <tr ng-repeat="todo in todoList|filter:search track by $index"
+                                <tr ng-repeat="todo in todoList|filter:{description: search} track by $index"
                                     ng-include="getTemplate(todo)">
                                 </tr>
                                 <script type="text/ng-template" id="display">
                                     <td>
                                         <input type="checkbox" ng-click="statusUpdate(todo.id, todo.status)"
-                                               ng-checked="{{todo.status ==='DONE'}}" class="checkbox1"
-                                               ng-false-value="'ACTIVE'" ng-true-value="'DONE'"/>
+                                               ng-model="todo.status" class="checkbox1"/>
                                         <span ng-class="todo.status ==='DONE'?'strikethrough todoDesc':'todoDesc'"
                                               ng-click="editContact(todo)" id="{{todo.id}}">
                                             {{todo.description}}
@@ -195,11 +198,15 @@
                                     </td>
                                 </script>
                                 <script type="text/ng-template" id="edit">
-                                    <td><input type="text" ng-model="todoList.selected.description"/></td>
-                                    <td>
-                                        <button ng-click="update($index)" class=" btn btn-success">Save</button>
-                                        <button ng-click="reset()" class="btn btn-danger">Cancel</button>
-                                    </td>
+                                    <form name="editTodo">
+                                        <td><input type="text" style="width: 250px;" class="form-control"
+                                                   ng-model="todoList.selected.description" required/>
+                                        </td>
+                                        <td class="pull-right">
+                                            <input type="submit" ng-click="update($index)" class=" btn btn-success" value="Save"/>
+                                            <button ng-click="reset()" class="btn btn-danger">Cancel</button>
+                                        </td>
+                                    </form>
                                 </script>
                             </table>
                         </div>

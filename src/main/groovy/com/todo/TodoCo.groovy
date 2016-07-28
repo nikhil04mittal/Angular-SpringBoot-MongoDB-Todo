@@ -5,5 +5,5 @@ package com.todo
  */
 class TodoCo {
     String description
-    String status
+    Boolean status
 }

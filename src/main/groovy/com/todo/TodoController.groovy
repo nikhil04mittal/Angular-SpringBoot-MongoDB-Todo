@@ -32,7 +32,7 @@ class TodoController {
 
     @RequestMapping(method = RequestMethod.POST, value = "search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Todo>> search(
-            @RequestParam("status") TodoStatus status, @RequestParam("search") String criteria) {
+            @RequestParam("status") Boolean status, @RequestParam("search") String criteria) {
         List<Todo> todoList = []
         if (status) {
             todoList = todoRepository.findByStatus(status)
@@ -51,7 +51,7 @@ class TodoController {
 
     @RequestMapping(method = RequestMethod.POST, value = "create", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> create(@RequestBody Todo todo) {
-        todo.setStatus(TodoStatus.ACTIVE)
+        todo.setStatus(false)
         todo.setDateCreated(new Date())
         String id = todoRepository.save(todo).id
         return new ResponseEntity<String>(id, HttpStatus.OK)
@@ -68,8 +68,7 @@ class TodoController {
     @RequestMapping(method = RequestMethod.PATCH, value = "status/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Todo> statusUpdate(@RequestBody TodoCo co, @PathVariable("id") String id) {
         Todo todo = todoRepository.findById(id)
-        TodoStatus todoStatus = co.status?.equalsIgnoreCase(TodoStatus.DONE.toString()) ? TodoStatus.DONE : TodoStatus.ACTIVE
-        todo.status = todoStatus
+        todo.status = co.status
         todoRepository.save(todo)
         return new ResponseEntity<Todo>(todo, HttpStatus.OK)
     }

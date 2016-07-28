@@ -20,6 +20,6 @@ class Todo {
     @Id
     String id
     String description
-    TodoStatus status
+    Boolean status
     Date dateCreated
 }
